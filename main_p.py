@@ -15,27 +15,34 @@ INTENTO_DELAY = 1  # segundos entre intentos
 def servir_comida(peso_deseado):
     intentos = 0
 
-    while True:
-        peso_actual = balanza.obtener_peso_actual()
-        print(f"Peso actual: {peso_actual}g")  # Opcional: mostrar en consola
 
-        if peso_actual >= peso_deseado:
-            print("✅ Peso suficiente, cerrando compuerta.")
-            break
+    peso_actual = balanza.obtener_peso_actual()
+    print(f"Peso actual: {peso_actual}g")  # Opcional: mostrar en consola
 
-        if intentos >= MAX_INTENTOS:
-            print("⚠️ Límite de intentos alcanzado. Comida no servida completamente.")
-            break
+    if peso_actual >= peso_deseado:
+        print("✅ Peso suficiente, cerrando compuerta.")
+    else:
+        try:
+            servo_control.pwm.start(0)  # Inicia el PWM con ciclo de trabajo 0
+            servo_control.abrir_compuerta()
+            while peso_actual < peso_deseado:
+                peso_actual = balanza.obtener_peso_actual()
+                print(f"Peso actual: {peso_actual}g")
+                menu_lcd.mostrar_mensaje("Sirviendo comida...")
+            menu_lcd.mostrar_mensaje("listo...")
+            servo_control.cerrar_compuerta()
+        finally:
+            servo_control.pwm.stop()
 
-        print("🔄 Abriendo compuerta para servir más comida.")
-        servo_control.abrir_compuerta()
-        time.sleep(0.5)  # Tiempo que se mantiene abierta
-        servo_control.cerrar_compuerta()
+    # servo_control.abrir_compuerta()
+    # time.sleep(0.5)  # Tiempo que se mantiene abierta
+    # #servo_control.cerrar_compuerta()
 
-        time.sleep(INTENTO_DELAY)
-        intentos += 1
 
-    servo_control.cerrar_compuerta()
+
+    # servo_control.cerrar_compuerta()
+
+    
 
 # if __name__ == "__main__":
 #     if horario.hora_comida():
@@ -47,15 +54,14 @@ def servir_comida(peso_deseado):
 
 
 if __name__ == "__main__":
-    menu_lcd.mostrar_mensaje("Hora de comer")
-    time.sleep(2)
     try:
         while True:
             if horario.hora_comida():
-                menu_lcd.mostrar_mensaje("Hora de comer")
+                menu_lcd.mostrar_mensaje("Hora de comer 10")
+                time.sleep(6)
                 servir_comida(PESO_OBJETIVO)
                 menu_lcd.mostrar_mensaje("Comida lista 😺")
-                time.sleep(600)  # Esperar 10 minutos antes de volver a revisar
+                time.sleep(6)  # Esperar 10 minutos antes de volver a revisar
             else:
                 menu_lcd.mostrar_mensaje("Esperando hora...")
                 print("Esperando la hora de la comida...")

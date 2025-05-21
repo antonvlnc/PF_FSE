@@ -11,4 +11,4 @@ def hora_comida(margen_minutos=5):
         diferencia = abs((ahora - hora_obj).total_seconds() / 60)
         if diferencia <= margen_minutos:
             return True
-    return False
+    return True
