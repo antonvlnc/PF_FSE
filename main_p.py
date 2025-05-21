@@ -61,3 +61,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\n🛑 Programa detenido por el usuario.")
         GPIO.cleanup()
+b
