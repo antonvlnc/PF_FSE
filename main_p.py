@@ -47,6 +47,8 @@ def servir_comida(peso_deseado):
 
 
 if __name__ == "__main__":
+    menu_lcd.mostrar_mensaje("Hora de comer")
+    time.sleep(2)
     try:
         while True:
             if horario.hora_comida():
