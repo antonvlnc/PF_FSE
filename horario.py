@@ -1,8 +1,14 @@
-#Para el horario, dos comidas al día
+from datetime import datetime, timedelta
 
-from datetime import datetime
-horarios_comida = [("08:00", "mañana"), ("20:00", "noche")]
+horarios_comida = [("08:00", "mañana"), ("13:26", "noche")]
 
-def hora_comida():
-  ahora = datetime.now().strftime("%H:%M")
-  return any(hora == ahora for hora, _ in horarios_comida)
+def hora_comida(margen_minutos=5):
+    ahora = datetime.now()
+    for hora_str, _ in horarios_comida:
+        hora_obj = datetime.strptime(hora_str, "%H:%M").replace(
+            year=ahora.year, month=ahora.month, day=ahora.day
+        )
+        diferencia = abs((ahora - hora_obj).total_seconds() / 60)
+        if diferencia <= margen_minutos:
+            return True
+    return False
